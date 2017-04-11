@@ -22,7 +22,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
+        //setContentView(R.layout.activity_splash);
 
 
         Nammu.askForPermission(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionCallback() {

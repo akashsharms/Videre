@@ -16,7 +16,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="90">
+        android:layout_weight="89">
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
@@ -27,12 +27,12 @@
     </android.support.v7.widget.RecyclerView>
     </LinearLayout>
 
-    <android.support.v7.widget.CardView
+    <!--<android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="10"
-        app:cardBackgroundColor="#66ffffff">
-    <!--    <FrameLayout
+        app:cardBackgroundColor="#66ffffff">-->
+ <!--       <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <ImageButton
@@ -41,7 +41,7 @@
                 android:layout_height="50dp"
                 android:background="@drawable/ic_action_name"/>
         </FrameLayout>-->
-    </android.support.v7.widget.CardView>
+    <!--</android.support.v7.widget.CardView>-->
 
 </LinearLayout>
     </FrameLayout>
