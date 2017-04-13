@@ -10,11 +10,42 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
-
-    <include
+    <!--<include
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" />--><LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="100">
+
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/sliding_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:gravity="bottom"
+        sothree:umanoFadeColor="@android:color/white"
+        sothree:umanoOverlay="true"
+        sothree:umanoPanelHeight="60dp"
+        sothree:umanoShadowHeight="0dp">
+
+        <include
+            layout="@layout/app_bar_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"></include>
+
+        <include
+            layout="@layout/slide_up_display"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"></include>
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+</LinearLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"

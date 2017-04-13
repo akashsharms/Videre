@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SlidingPaneLayout;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -27,9 +28,12 @@ import com.example.akash.videre.data.Songs;
 import com.example.akash.videre.fragments.FragmentAlbum;
 import com.example.akash.videre.fragments.FragmentAllSongs;
 import com.example.akash.videre.fragments.FragmentArtist;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import static com.example.akash.videre.R.id.textView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity
     ViewPager viewPager;
     ImageButton stop;
     int  initial_playing = -1;
+    SlidingUpPanelLayout slidingPaneLayout;
     MediaPlayer mediaPlayer;
     Boolean playing = false;
     private ArrayList<Songs> songs=new ArrayList<>();
@@ -56,6 +61,29 @@ public class MainActivity extends AppCompatActivity
         sectionsPagerAdapter=new SectionsPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        slidingPaneLayout= (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        slidingPaneLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                if(slideOffset>=0.5){
+                    stop.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+            if(newState== SlidingUpPanelLayout.PanelState.EXPANDED){
+                stop.setVisibility(View.VISIBLE);
+                stop.setImageResource(R.drawable.ic_equaliser);
+            }
+            else {
+                stop.setVisibility(View.VISIBLE);
+                if(playing)
+                    stop.setImageResource(R.drawable.ic_play);
+                else stop.setImageResource(R.drawable.ic_pause);
+            }
+            }
+        });
         tabLayout.setupWithViewPager(viewPager);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -64,6 +92,9 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+//        if(slidingPaneLayout.getPanelState()== SlidingUpPanelLayout.PanelState.EXPANDED){
+//            stop.setImageResource(R.drawable.ic_equaliser);
+//        }
          asyncTask = new AsyncTask<Void, Void, ArrayList<Songs>>() {
             @Override
             protected ArrayList<Songs> doInBackground(Void... params) {
@@ -125,6 +156,8 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
+
 
             }
         };
@@ -213,6 +246,18 @@ public class MainActivity extends AppCompatActivity
                         playSong(songs.get(pos).getData(),pos);
 
                     }
+
+                    @Override
+                    public void OnClicked() {
+
+                         slidingPaneLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                        stop.setImageResource(R.drawable.ic_equaliser);
+
+
+
+                    }
+
+
                 });}
                 else{
                     fragmentAllSongs=new FragmentAllSongs();
@@ -226,6 +271,14 @@ public class MainActivity extends AppCompatActivity
                         public void OnClicked(int pos) {
                             playSong(songs.get(pos).getData(),pos);
                         }
+
+                        @Override
+                        public void OnClicked() {
+//                            if(slidingPaneLayout.getPanelState()!= SlidingUpPanelLayout.PanelState.EXPANDED)
+//                            {slidingPaneLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+//                            stop.setImageResource(R.drawable.ic_equaliser);}
+                        }
+
                     });
                 }
                 return fragmentAllSongs;
@@ -283,6 +336,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
     }
+
 }

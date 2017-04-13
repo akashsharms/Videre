@@ -45,6 +45,7 @@ public class FragmentAllSongs extends Fragment {
     public interface OnFragmentReady {
         void OnReady();
         void OnClicked(int pos);
+        void OnClicked();
     }
 
     public void setOnFragmentReady(OnFragmentReady listener) {
@@ -199,6 +200,7 @@ public class FragmentAllSongs extends Fragment {
                         Glide.with(getContext()).load(R.drawable.disc).asGif()
                                 .fitCenter().into(holder.iv_gif);
                         readyListener.OnClicked(position);
+                        readyListener.OnClicked();
 
                     } else {
 
