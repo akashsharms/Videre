@@ -18,7 +18,8 @@
     android:layout_height="match_parent"
     android:weightSum="100">
 
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:sothree="http://schemas.android.com/apk/res-auto"
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
@@ -27,7 +28,7 @@
         android:gravity="bottom"
         sothree:umanoFadeColor="@android:color/white"
         sothree:umanoOverlay="true"
-        sothree:umanoPanelHeight="60dp"
+        sothree:umanoPanelHeight="65dp"
         sothree:umanoShadowHeight="0dp">
 
         <include

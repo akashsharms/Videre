@@ -8,18 +8,32 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
+import com.example.akash.videre.MySingleton;
 import com.example.akash.videre.R;
 import com.example.akash.videre.data.Songs;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
@@ -31,7 +45,8 @@ public class FragmentArtist extends Fragment {
     Cursor musicCursor,artistCursor,albumCursor;
     ArrayList<Songs> songs=new ArrayList<>();
     String this_album;
-    LinearLayoutManager linearLayoutManager;
+    GridLayoutManager gridLinearLayout;
+    String url;
     MyAdapter adapter;
     @Nullable
     @Override
@@ -83,8 +98,8 @@ public class FragmentArtist extends Fragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                linearLayoutManager=new LinearLayoutManager(getContext());
-                recyclerView.setLayoutManager(linearLayoutManager);
+                gridLinearLayout=new GridLayoutManager(getContext(),2);
+                recyclerView.setLayoutManager(gridLinearLayout);
                 adapter=new MyAdapter();
                 recyclerView.setAdapter(adapter);
             }
@@ -115,16 +130,58 @@ public class FragmentArtist extends Fragment {
 
         @Override
         public void onBindViewHolder(MyHolder holder, int position) {
-        Songs currSongs=songs.get(position);
+        final Songs currSongs=songs.get(position);
             holder.tv_artist_name.setText(currSongs.getArtist());
+            try {
+                url="http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=" + URLEncoder.encode
+                        (currSongs.getArtist().trim(), "UTF-8")
+                        +
+                        "&" + "api_key=427b002d583bb1e76ec74d77e3737bfc&format=json";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            JsonObjectRequest artistArtRequest=new JsonObjectRequest
+                    (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                JSONObject artist=response.getJSONObject("artist");
+                                JSONArray images=artist.getJSONArray("image");
+                                for(int i=0;i<images.length();i++){
+                                    JSONObject temp= images.getJSONObject(i);
+                                    if(temp.getString("size").equals("large")){
+
+                                        currSongs.setUrl(temp.getString("#text"));
+                                        Log.d("glide", "onResponse: "+currSongs.getUrl());
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            MySingleton.getInstance(getContext()).addToRequestQueue(artistArtRequest);
+            Log.d("glide", "onBindViewHolder: "+currSongs.getUrl());
             holder.tv_artist_songs.setText(currSongs.getNo_of_songs()+" songs");
             holder.tv_artist_albums.setText(currSongs.getNo_of_albums()+" albums");
-            if(currSongs.getArtPath()==null){
-                Glide.with(getContext()).load(R.drawable.albums_back).centerCrop().into(holder.iv_artist);
-            }
-            else{
-                Glide.with(getContext()).load(currSongs.getArtPath()).centerCrop().into(holder.iv_artist);
-            }
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getContext(), " "+currSongs.getUrl(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+                            Picasso.with(getContext()).load(currSongs.getUrl()).fit().centerCrop().into(holder.iv_artist);
+
         }
 
         @Override

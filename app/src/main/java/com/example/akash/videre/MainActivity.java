@@ -2,6 +2,7 @@ package com.example.akash.videre;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -12,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SlidingPaneLayout;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,7 +23,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.akash.videre.data.Songs;
 import com.example.akash.videre.fragments.FragmentAlbum;
 import com.example.akash.videre.fragments.FragmentAllSongs;
@@ -33,8 +37,6 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.example.akash.videre.R.id.textView;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     SectionsPagerAdapter sectionsPagerAdapter;
@@ -42,6 +44,9 @@ public class MainActivity extends AppCompatActivity
     ImageButton stop;
     int  initial_playing = -1;
     SlidingUpPanelLayout slidingPaneLayout;
+    LinearLayout linearLayoutSlidingPanel;
+    ImageView imageView_slide_background,imageView_slide_thumbnail;
+    TextView tv_display_song_name_slide,tv_display_artist_name_side;
     MediaPlayer mediaPlayer;
     Boolean playing = false;
     private ArrayList<Songs> songs=new ArrayList<>();
@@ -57,9 +62,14 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         stop = (ImageButton) findViewById(R.id.stop_button);
+        linearLayoutSlidingPanel= (LinearLayout) findViewById(R.id.linear_layout_slide);
         viewPager= (ViewPager) findViewById(R.id.container);
         sectionsPagerAdapter=new SectionsPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(sectionsPagerAdapter);
+        imageView_slide_background = (ImageView) findViewById(R.id.iv_inner_album_art);
+        imageView_slide_thumbnail= (ImageView) findViewById(R.id.iv_play_song);
+        tv_display_artist_name_side= (TextView) findViewById(R.id.tv_artist_play_song);
+        tv_display_song_name_slide= (TextView) findViewById(R.id.tv_play_song);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         slidingPaneLayout= (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         slidingPaneLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
@@ -73,11 +83,13 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
             if(newState== SlidingUpPanelLayout.PanelState.EXPANDED){
+                linearLayoutSlidingPanel.setBackgroundColor(Color.argb(180,255,255,255));
                 stop.setVisibility(View.VISIBLE);
                 stop.setImageResource(R.drawable.ic_equaliser);
             }
             else {
                 stop.setVisibility(View.VISIBLE);
+              linearLayoutSlidingPanel.setBackgroundColor(Color.WHITE);
                 if(playing)
                     stop.setImageResource(R.drawable.ic_play);
                 else stop.setImageResource(R.drawable.ic_pause);
@@ -244,7 +256,10 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void OnClicked(int pos) {
                         playSong(songs.get(pos).getData(),pos);
-
+                        tv_display_song_name_slide.setText(songs.get(pos).getTitle());
+                        tv_display_artist_name_side.setText(songs.get(pos).getArtist());
+                        Glide.with(MainActivity.this).load(new File(songs.get(pos).getArtPath())).asBitmap().centerCrop().into(imageView_slide_thumbnail);
+                        Glide.with(MainActivity.this).load(new File(songs.get(pos).getArtPath())).asBitmap().centerCrop().into(imageView_slide_background);
                     }
 
                     @Override
@@ -270,6 +285,10 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void OnClicked(int pos) {
                             playSong(songs.get(pos).getData(),pos);
+                            tv_display_song_name_slide.setText(songs.get(pos).getTitle());
+                            tv_display_artist_name_side.setText(songs.get(pos).getArtist());
+                            Glide.with(MainActivity.this).load(new File(songs.get(pos).getArtPath())).asBitmap().centerCrop().into(imageView_slide_thumbnail);
+                            Glide.with(MainActivity.this).load(new File(songs.get(pos).getArtPath())).asBitmap().fitCenter().into(imageView_slide_background);
                         }
 
                         @Override

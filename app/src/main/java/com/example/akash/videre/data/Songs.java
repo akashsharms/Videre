@@ -17,7 +17,7 @@ public class Songs {
     String data;
     String no_of_songs;
     String no_of_albums;
-
+    String url=null;
 
     public Songs(String title, String artist, String id, String album, String artPath, Bitmap albumArt, Boolean prevPlaying, String data, String no_of_songs, String no_of_albums) {
         this.title = title;
@@ -34,6 +34,14 @@ public class Songs {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public void setTitle(String title) {
